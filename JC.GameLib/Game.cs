@@ -15,6 +15,13 @@ public enum GameStatus : byte
 
 public class Game
 {
+    public Game()
+    {
+        moves = new();
+        board = new byte[64];
+    }
+
+    // existing class content
     // Pieces constants as bytes
     public const byte NONE = 0,
         WHITE_KING = 1,
