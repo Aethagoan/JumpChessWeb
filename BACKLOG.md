@@ -4,6 +4,7 @@
 - [ ] Define API contract (routes, payloads).
 - [ ] Implement back‑end in C# (ASP.NET Core Web API).
 - [ ] Build a simple front‑end: HTML page, CSS for board layout, JS for interaction.
+- [ ] Implement undo, veto, status API endpoints
 - [ ] Authentication integration.
 - [ ] Data persistence using NoSQL (e.g., MongoDB, LiteDB) and migration scripts.
 - [ ] CI/CD pipeline with minimal steps.

@@ -12,6 +12,15 @@ Create a new, simplified version of the JumpChess project that replaces the nati
 - Avoid introducing heavy dependencies; use standard libraries and minimal third‑party packages.
 
 ## Assumptions
+
+## API Endpoints
+- POST `/api/games` – Create a new game. Payload: `GameCreateDto` (player IDs, undo flag, veto counts). Returns game ID.
+- GET `/api/games/{id}` – Retrieve full game state.
+- POST `/api/games/{id}/move` – Submit a move. Payload: `MoveRequest` (from, to, optional promotion piece). Returns updated game.
+- POST `/api/games/{id}/undo` – Undo the last move. Requires query `playerId`. Returns updated game or BadRequest.
+- POST `/api/games/{id}/veto` – Veto the last move. Requires query `playerId`. Returns updated game or BadRequest.
+- GET `/api/games/{id}/status` – Get current `GameStatus` enum value.
+
 - The legacy code in `../jumpchess` contains all the essential game logic and can be reused or lightly refactored.
 - Users will access the new version via modern browsers (Chrome, Firefox, Safari).
 - Authentication will use an encrypted exchange of credentials and server IP; JWT/session cookies can be added later.

@@ -35,6 +35,7 @@ Create a new, simplified version of the JumpChess project that replaces the nati
 
 ## Completed
 - [x] Implement back‑end in C# (ASP.NET Core Web API).
+- [x] Add undo, veto, status API endpoints
 
 ## In Progress
 - Game logic extraction.
