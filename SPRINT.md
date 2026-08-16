@@ -1,23 +1,12 @@
-# Sprint
+# Next Sprint
 
-## Current Sprint
-
-- [ ] Write unit tests for API endpoints.
-- [ ] Write README / API documentation.
-- [ ] Add basic front‑end routing.
-- [ ] Deploy static front‑end.
-
-## Completed
-
-- [x] Integrate basic authentication (AES).
-- [x] Implement SQLite persistence.
-- [x] Build minimal static front‑end.
-- [x] User testing & bug triage.
-- [x] Add unit tests for game logic library.
-- [x] Updated target framework to .NET 10.0 for all projects.
-- [x] Implement back‑end in C# (ASP.NET Core Web API).
-- [x] Write README / API documentation.
-
-## Blocked
-
-- None
+- [ ] Create JC.GameLib with core game logic from JC.Core and JC.Shared.
+- [ ] Implement GameService to use JC.GameLib.
+- [ ] Add SQLite persistence (data context, migrations).
+- [ ] Create API endpoints:
+  * POST `/api/games/create` – create game.
+  * GET `/api/games/{id}` – retrieve state.
+  * GET `/api/games/{id}/status` – game status.
+- [ ] Implement minimal authentication with AESAuth.
+- [ ] Add unit tests for GameLib and API.
+- [ ] Add Dockerfile and CI pipeline.
