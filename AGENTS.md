@@ -12,15 +12,6 @@ Create a new, simplified version of the JumpChess project that replaces the nati
 - Avoid introducing heavy dependencies; use standard libraries and minimal third‑party packages.
 
 ## Assumptions
-
-## API Endpoints
-- POST `/api/games/create` – Create a new game. Payload: `GameCreateDto` (player IDs, undo flag, veto counts). Returns game ID.
-- GET `/api/games/{id}` – Retrieve full game state.
-- POST `/api/games/{id}/move` – Submit a move. Payload: `MoveRequest` (from, to, optional promotion piece). Returns updated game.
-- POST `/api/games/{id}/undo` – Undo the last move. Requires query `playerId`. Returns updated game or BadRequest.
-- POST `/api/games/{id}/veto` – Veto the last move. Requires query `playerId`. Returns updated game or BadRequest.
-- GET `/api/games/{id}/status` – Get current `GameStatus` enum value.
-
 - The legacy code in `../jumpchess` contains all the essential game logic and can be reused or lightly refactored.
 - Authentication will use an encrypted exchange of credentials and server IP; JWT/session cookies can be added later.
 - Deployment will occur on a standard Linux VM or container.
@@ -33,6 +24,7 @@ Create a new, simplified version of the JumpChess project that replaces the nati
 - Prefer C# for the back‑end to stay consistent with current codebase.
 - Serve static assets from a separate lightweight web host; the API remains standalone.
 - Use plain JS (no framework) for maximum simplicity.
+- All directories needed are created. Do not create any more directories, all the directories needed are already present.
 
 ## Architecture Overview
 - Back‑end: ASP.NET Core Web API exposing REST endpoints; compiled into a self‑contained DLL.
@@ -42,3 +34,6 @@ Create a new, simplified version of the JumpChess project that replaces the nati
 - Front‑end: single HTML page served from an independent static file host (e.g., Nginx or a tiny file server). UI renders an 8×8 grid and uses vanilla JS to send/receive moves.
 - Build: `dotnet publish -c Release` creates a publish folder;
 - Dotnet version is net10.0 no exceptions.
+- The Backend API exists in `./JC.API`. Its corresponding tests exist in `./JC.API.Tests`. All changes to the API or API tests are done through these directories.
+- The Game Library exists in `./JC.GameLib`. Its corresponding tests exist in `./JC.GameLib.Tests`. All changes to the Game Library should be done through these directories.
+- The Web UI / frontend exists in `./JC.Web`. Corresponding tests should exist in `./JC.Web.Tests`. All changes to the Web Frontend should be done throgh those directories.
