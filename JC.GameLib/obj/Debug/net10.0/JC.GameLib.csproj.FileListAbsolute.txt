@@ -1,0 +1,9 @@
+/home/xefin/Projects/jumpchess2/JC.GameLib/bin/Debug/net10.0/JC.GameLib.deps.json
+/home/xefin/Projects/jumpchess2/JC.GameLib/bin/Debug/net10.0/JC.GameLib.dll
+/home/xefin/Projects/jumpchess2/JC.GameLib/bin/Debug/net10.0/JC.GameLib.pdb
+/home/xefin/Projects/jumpchess2/JC.GameLib/obj/Debug/net10.0/JC.GameLib.GeneratedMSBuildEditorConfig.editorconfig
+/home/xefin/Projects/jumpchess2/JC.GameLib/obj/Debug/net10.0/JC.GameLib.csproj.CoreCompileInputs.cache
+/home/xefin/Projects/jumpchess2/JC.GameLib/obj/Debug/net10.0/JC.GameLib.dll
+/home/xefin/Projects/jumpchess2/JC.GameLib/obj/Debug/net10.0/refint/JC.GameLib.dll
+/home/xefin/Projects/jumpchess2/JC.GameLib/obj/Debug/net10.0/JC.GameLib.pdb
+/home/xefin/Projects/jumpchess2/JC.GameLib/obj/Debug/net10.0/ref/JC.GameLib.dll

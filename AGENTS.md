@@ -33,3 +33,4 @@ Create a new, simplified version of the JumpChess project that replaces the nati
 - Auth: simple symmetric encryption (AES) for credential exchange; JWT added later.
 - Front‑end: single HTML page served from an independent static file host (e.g., Nginx or a tiny file server). UI renders an 8×8 grid and uses vanilla JS to send/receive moves.
 - Build: `dotnet publish -c Release` creates a publish folder; Dockerfile can wrap it later.
+- Dotnet version is net10.0 no exceptions.

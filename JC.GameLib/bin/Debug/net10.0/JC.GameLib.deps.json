@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "JC.GameLib/1.0.0": {
+        "runtime": {
+          "JC.GameLib.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "JC.GameLib/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
