@@ -1,12 +1,13 @@
-# Next Sprint
+# Sprint 1
 
-- [ ] Create JC.GameLib with core game logic from JC.Core and JC.Shared.
-- [ ] Implement GameService to use JC.GameLib.
-- [ ] Add SQLite persistence (data context, migrations).
-- [ ] Create API endpoints:
-  * POST `/api/games/create` – create game.
-  * GET `/api/games/{id}` – retrieve state.
-  * GET `/api/games/{id}/status` – game status.
-- [ ] Implement minimal authentication with AESAuth.
-- [ ] Add unit tests for GameLib and API.
-- [ ] Add Dockerfile and CI pipeline.
+## Goal
+Set up the project scaffold and implement the game creation and retrieval endpoints.
+
+## Tasks
+- [x] 1️⃣ Setup minimal ASP.NET Core project with in-memory game store
+- [x] 2️⃣ Implement create and get endpoints
+
+## Status
+- Started: 2026-08-16
+- Completed: 2026-08-17
+- Due: 2026-08-20
