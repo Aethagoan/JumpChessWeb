@@ -11,6 +11,7 @@ using Microsoft.Data.Sqlite;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ISettingsService, SettingsService>();
 builder.Services.AddSingleton<GameService>();
+builder.Services.AddSingleton<IPlayerService, PlayerService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -105,6 +106,11 @@ app.MapGet("/api/games/{id}/status", (HttpContext ctx, Guid id, GameService game
     return game != null ? Results.Ok(game.GetGameStatus()) : Results.NotFound();
 });
 
+app.MapGet("/api/players/{id}", (byte id, IPlayerService ps) =>
+    {
+        var name = ps.GetPlayerName(id);
+        return name != null ? Results.Ok(new { id, name }) : Results.NotFound();
+    });
 app.UseSwagger();
 app.UseSwaggerUI();
 

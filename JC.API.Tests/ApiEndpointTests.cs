@@ -31,4 +31,22 @@ public class ApiEndpointTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await _client.GetAsync("/api/games/00000000-0000-0000-0000-000000000000");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+    
+    [Fact]
+    public async Task GetPlayerName_ReturnsName()
+    {
+        var response = await _client.GetAsync("/api/players/1");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(1, json.GetProperty("id").GetByte());
+        Assert.Equal("Alice", json.GetProperty("name").GetString());
+    }
+
+    [Fact]
+    public async Task GetPlayerName_NotFound()
+    {
+        var response = await _client.GetAsync("/api/players/99");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
 }
