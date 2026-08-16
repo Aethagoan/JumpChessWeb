@@ -1,9 +1,15 @@
 using System.Collections.Concurrent;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using JC.GameLib;
 using System.IO;
 using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<ISettingsService, SettingsService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -54,8 +60,25 @@ app.MapPost("/api/auth/login", (LoginDto dto) =>
     return Results.Ok(new { token });
 });
 
-app.MapPost("/api/games", (GameCreateDto dto) =>
+var settings = app.Services.GetRequiredService<ISettingsService>();
+
+byte? GetPlayerId(HttpContext ctx)
 {
+    if (!ctx.Request.Headers.TryGetValue("Authorization", out var authHeaders)) return null;
+    var header = authHeaders.FirstOrDefault();
+    if (string.IsNullOrWhiteSpace(header) || !header.StartsWith("Bearer ")) return null;
+    var token = header[7..];
+    var creds = AESAuth.DecryptToken(token);
+    if (creds == null) return null;
+    if (!settings.Credentials.TryGetValue(creds.Value.username, out var entry)) return null;
+    if (entry.Password != creds.Value.password) return null;
+    return entry.Id;
+}
+
+app.MapPost("/api/games", (HttpContext ctx, GameCreateDto dto) =>
+{
+    var playerId = GetPlayerId(ctx);
+    if (playerId == null) return Results.Unauthorized();
     var id = Guid.NewGuid();
     var game = new Game(dto.WhitePlayer, dto.BlackPlayer, dto.EnableUndo, dto.WhiteVetoes, dto.BlackVetoes);
     games[id] = game;
@@ -63,13 +86,17 @@ app.MapPost("/api/games", (GameCreateDto dto) =>
     return Results.Created($"/api/games/{id}", new { id });
 });
 
-app.MapGet("/api/games/{id}", (Guid id) =>
+app.MapGet("/api/games/{id}", (HttpContext ctx, Guid id) =>
 {
+    var playerId = GetPlayerId(ctx);
+    if (playerId == null) return Results.Unauthorized();
     return games.TryGetValue(id, out var game) ? Results.Ok(game) : Results.NotFound();
 });
 
-app.MapPost("/api/games/{id}/move", (Guid id, MoveRequest dto) =>
+app.MapPost("/api/games/{id}/move", (HttpContext ctx, Guid id, MoveRequest dto) =>
 {
+    var playerId = GetPlayerId(ctx);
+    if (playerId == null) return Results.Unauthorized();
     if (!games.TryGetValue(id, out var game))
         return Results.NotFound();
     if (!game.Move((byte)dto.From, (byte)dto.To, (byte)dto.PromotionPiece))
@@ -78,8 +105,10 @@ app.MapPost("/api/games/{id}/move", (Guid id, MoveRequest dto) =>
     return Results.Ok(game);
 });
 
-app.MapPost("/api/games/{id}/undo", (Guid id, byte playerId) =>
+app.MapPost("/api/games/{id}/undo", (HttpContext ctx, Guid id, byte playerId) =>
 {
+    var authId = GetPlayerId(ctx);
+    if (authId == null) return Results.Unauthorized();
     if (!games.TryGetValue(id, out var game))
         return Results.NotFound();
     if (game.Undo(playerId))
@@ -90,8 +119,10 @@ app.MapPost("/api/games/{id}/undo", (Guid id, byte playerId) =>
     return Results.BadRequest("Undo not allowed");
 });
 
-app.MapPost("/api/games/{id}/veto", (Guid id, byte playerId) =>
+app.MapPost("/api/games/{id}/veto", (HttpContext ctx, Guid id, byte playerId) =>
 {
+    var authId = GetPlayerId(ctx);
+    if (authId == null) return Results.Unauthorized();
     if (!games.TryGetValue(id, out var game))
         return Results.NotFound();
     if (game.Veto(playerId))
@@ -102,8 +133,10 @@ app.MapPost("/api/games/{id}/veto", (Guid id, byte playerId) =>
     return Results.BadRequest("Veto not allowed");
 });
 
-app.MapGet("/api/games/{id}/status", (Guid id) =>
+app.MapGet("/api/games/{id}/status", (HttpContext ctx, Guid id) =>
 {
+    var authId = GetPlayerId(ctx);
+    if (authId == null) return Results.Unauthorized();
     return games.TryGetValue(id, out var game) ? Results.Ok(game.GetGameStatus()) : Results.NotFound();
 });
 
