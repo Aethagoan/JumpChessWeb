@@ -1,14 +1,11 @@
 using System.Collections.Concurrent;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using JC.GameLib;
-using System.IO;
-using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<SQLiteDataHandler>();
 builder.Services.AddSingleton<ISettingsService, SettingsService>();
 builder.Services.AddSingleton<GameService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
@@ -18,11 +15,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
-
 app.MapPost("/api/auth/login", (LoginDto dto) =>
 {
-    // Very simple auth: accept any username/password and return an encrypted token
     var token = AESAuth.EncryptToken(dto.Username, dto.Password);
     return Results.Ok(new { token });
 });

@@ -1,48 +1,24 @@
 using System.Collections.Concurrent;
-using System.Data;
-using Microsoft.Data.Sqlite;
+using System.Linq;
 using JC.GameLib;
-using System.IO;
 
 public class GameService
 {
     private readonly ConcurrentDictionary<Guid, Game> _games = new();
-    private readonly SqliteConnection _conn;
+    private readonly SQLiteDataHandler _db;
 
-    public GameService()
+    public GameService(SQLiteDataHandler db)
     {
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "data.db");
-        var connStr = new SqliteConnectionStringBuilder { DataSource = dbPath }.ToString();
-        _conn = new SqliteConnection(connStr);
-        _conn.Open();
-
-        var createCmd = _conn.CreateCommand();
-        createCmd.CommandText = "CREATE TABLE IF NOT EXISTS Games (Id TEXT PRIMARY KEY, Data TEXT NOT NULL)";
-        createCmd.ExecuteNonQuery();
-
-        var selectCmd = _conn.CreateCommand();
-        selectCmd.CommandText = "SELECT Id, Data FROM Games";
-        using var reader = selectCmd.ExecuteReader();
-        while (reader.Read())
+        _db = db;
+        foreach (var (id, game) in _db.LoadGames())
         {
-            var idStr = reader.GetString(0);
-            var json = reader.GetString(1);
-            if (Guid.TryParse(idStr, out var id))
-            {
-                var game = System.Text.Json.JsonSerializer.Deserialize<Game>(json);
-                if (game != null) _games[id] = game;
-            }
+            _games[id] = game;
         }
     }
 
     private void Persist(Guid id, Game game)
     {
-        var json = System.Text.Json.JsonSerializer.Serialize(game);
-        var cmd = _conn.CreateCommand();
-        cmd.CommandText = "INSERT INTO Games (Id, Data) VALUES ($id, $data) ON CONFLICT(Id) DO UPDATE SET Data = $data";
-        cmd.Parameters.AddWithValue("$id", id.ToString());
-        cmd.Parameters.AddWithValue("$data", json);
-        cmd.ExecuteNonQuery();
+        _db.PersistGame(id, game);
     }
 
     public Guid CreateGame(byte whitePlayer, byte blackPlayer, bool enableUndo, byte whiteVetoes, byte blackVetoes)
