@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
 using System.IO;
 using JC.GameLib;
 
@@ -9,9 +10,9 @@ public class SQLiteDataHandler
 {
     private readonly SqliteConnection _conn;
 
-    public SQLiteDataHandler()
+    public SQLiteDataHandler(IConfiguration config)
     {
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "data.db");
+        var dbPath = config["DbPath"] ?? Path.Combine(AppContext.BaseDirectory, "data.db");
         var connStr = new SqliteConnectionStringBuilder { DataSource = dbPath }.ToString();
         _conn = new SqliteConnection(connStr);
         _conn.Open();
@@ -28,6 +29,18 @@ public class SQLiteDataHandler
         var createCreds = _conn.CreateCommand();
         createCreds.CommandText = "CREATE TABLE IF NOT EXISTS Credentials (Username TEXT PRIMARY KEY, Id INTEGER NOT NULL, Password TEXT NOT NULL)";
         createCreds.ExecuteNonQuery();
+
+        // Seed players from configuration (appsettings.json)
+        var players = config.GetSection("PlayerNames");
+        foreach (var child in players.GetChildren())
+        {
+            if (!byte.TryParse(child.Key, out var id) || string.IsNullOrEmpty(child.Value)) continue;
+            var cmd = _conn.CreateCommand();
+            cmd.CommandText = "INSERT INTO Players (Id, Name) VALUES ($id, $name) ON CONFLICT(Id) DO NOTHING";
+            cmd.Parameters.AddWithValue("$id", id);
+            cmd.Parameters.AddWithValue("$name", child.Value);
+            cmd.ExecuteNonQuery();
+        }
     }
 
     public IEnumerable<(Guid Id, Game Game)> LoadGames()
@@ -97,5 +110,15 @@ public class SQLiteDataHandler
             dict[username] = ((byte)id, password);
         }
         return dict;
+    }
+
+    public void UpsertCredential(string username, byte id, string password)
+    {
+        var cmd = _conn.CreateCommand();
+        cmd.CommandText = "INSERT OR REPLACE INTO Credentials (Username, Id, Password) VALUES ($username, $id, $password)";
+        cmd.Parameters.AddWithValue("$username", username);
+        cmd.Parameters.AddWithValue("$id", id);
+        cmd.Parameters.AddWithValue("$password", password);
+        cmd.ExecuteNonQuery();
     }
 }
