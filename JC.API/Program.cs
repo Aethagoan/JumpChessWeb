@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using JC.GameLib;
@@ -18,7 +19,7 @@ var app = builder.Build();
 app.MapPost("/api/auth/login", (LoginDto dto) =>
 {
     var token = AESAuth.EncryptToken(dto.Username, dto.Password);
-    return Results.Ok(new { token });
+    return Results.Ok(new LoginResponse(token));
 });
 
 var settings = app.Services.GetRequiredService<ISettingsService>();
@@ -41,7 +42,7 @@ app.MapPost("/api/games", (HttpContext ctx, GameCreateDto dto, GameService gameS
     var playerId = GetPlayerId(ctx);
     if (playerId == null) return Results.Unauthorized();
     var id = gameService.CreateGame(dto.WhitePlayer, dto.BlackPlayer, dto.EnableUndo, dto.WhiteVetoes, dto.BlackVetoes);
-    return Results.Created($"/api/games/{id}", new { id });
+    return Results.Created($"/api/games/{id}", new GameCreatedResponse(id));
 });
 
 app.MapGet("/api/games/{id}", (HttpContext ctx, Guid id, GameService gameService) =>
@@ -59,7 +60,7 @@ app.MapPost("/api/games/{id}/move", (HttpContext ctx, Guid id, MoveRequest dto, 
     var game = gameService.GetGame(id);
     if (game == null) return Results.NotFound();
     if (!game.Move((byte)dto.From, (byte)dto.To, (byte)dto.PromotionPiece))
-        return Results.BadRequest("Invalid move");
+        return Results.BadRequest(new MoveResult(false, "Invalid move"));
     gameService.Save(id, game);
     return Results.Ok(game);
 });
@@ -75,7 +76,7 @@ app.MapPost("/api/games/{id}/undo", (HttpContext ctx, Guid id, byte playerId, Ga
         gameService.Save(id, game);
         return Results.Ok(game);
     }
-    return Results.BadRequest("Undo not allowed");
+    return Results.BadRequest(new MoveResult(false, "Undo not allowed"));
 });
 
 app.MapPost("/api/games/{id}/veto", (HttpContext ctx, Guid id, byte playerId, GameService gameService) =>
@@ -89,7 +90,7 @@ app.MapPost("/api/games/{id}/veto", (HttpContext ctx, Guid id, byte playerId, Ga
         gameService.Save(id, game);
         return Results.Ok(game);
     }
-    return Results.BadRequest("Veto not allowed");
+    return Results.BadRequest(new MoveResult(false, "Veto not allowed"));
 });
 
 app.MapGet("/api/games/{id}/status", (HttpContext ctx, Guid id, GameService gameService) =>
@@ -101,10 +102,11 @@ app.MapGet("/api/games/{id}/status", (HttpContext ctx, Guid id, GameService game
 });
 
 app.MapGet("/api/players/{id}", (byte id, IPlayerService ps) =>
-    {
-        var name = ps.GetPlayerName(id);
-        return name != null ? Results.Ok(new { id, name }) : Results.NotFound();
-    });
+{
+    var name = ps.GetPlayerName(id);
+    return name != null ? Results.Ok(new PlayerResponse(id, name)) : Results.NotFound();
+});
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
