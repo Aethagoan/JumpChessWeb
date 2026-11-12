@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JumpChess - New Game</title>
+  <link rel="stylesheet" href="js/style.css">
+</head>
+<body>
+  <main class="shell">
+    <nav><a href="index.html">← Home</a><a href="settings.html">Settings</a></nav>
+    <section class="card">
+      <p class="eyebrow">GAME SETUP</p>
+      <h1>New game</h1>
+      <form id="setup-form" class="form">
+        <fieldset>
+          <legend>Game type</legend>
+          <label class="choice"><input type="radio" name="gameType" value="default" checked> Default</label>
+          <label class="choice"><input type="radio" name="gameType" value="custom"> Custom rules</label>
+        </fieldset>
+        <fieldset>
+          <legend>Your side</legend>
+          <label class="choice"><input type="radio" name="color" value="white" checked> White</label>
+          <label class="choice"><input type="radio" name="color" value="black"> Black</label>
+        </fieldset>
+        <label>Opponent player ID<input name="opponentId" type="number" min="1" max="255" required></label>
+        <div class="grid two">
+          <label>White vetoes<input name="whiteVetoes" type="number" min="0" max="255" value="0"></label>
+          <label>Black vetoes<input name="blackVetoes" type="number" min="0" max="255" value="0"></label>
+        </div>
+        <label class="choice"><input name="enableUndo" type="checkbox"> Enable undo</label>
+        <p class="muted">Custom piece placement is not supported by the current API yet; custom mode currently applies the available rule settings.</p>
+        <button class="primary" type="submit">Create game</button>
+        <p id="setup-status" class="status"></p>
+      </form>
+    </section>
+  </main>
+  <script src="js/web.js"></script>
+  <script>JumpChess.initSetup();</script>
+</body>
+</html>

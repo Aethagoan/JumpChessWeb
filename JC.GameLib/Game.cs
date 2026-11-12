@@ -97,6 +97,14 @@ public class Game
         }
         return 0;
     }
+
+    public byte WhiteVetoesRemaining => whiteVetoesPerTurn > 0
+        ? (byte)(whiteVetoesPerTurn - whiteVetoesUsedThisTurn)
+        : (byte)0;
+
+    public byte BlackVetoesRemaining => blackVetoesPerTurn > 0
+        ? (byte)(blackVetoesPerTurn - blackVetoesUsedThisTurn)
+        : (byte)0;
     
     // Get veto info for response
     public (byte whiteRemaining, byte blackRemaining) GetVetoInfo()

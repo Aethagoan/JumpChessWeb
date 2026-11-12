@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JumpChess - Rules</title>
+  <link rel="stylesheet" href="js/style.css">
+</head>
+<body>
+  <main class="shell">
+    <nav><a href="index.html">← Home</a></nav>
+    <section class="card">
+      <p class="eyebrow">RULES</p>
+      <h1>JumpChess Rules</h1>
+      <p class="muted">JumpChess is a chess variant that adds a single new mechanic: every piece can hop over one of its own pieces per move. All other rules are the same as standard chess.</p>
+      <h2>1. Board and Pieces</h2>
+      <ul>
+        <li>8×8 board, light squares on the corner for the player with the white pieces.</li>
+        <li>Each side starts with the standard 16 pieces.</li>
+      </ul>
+      <h2>2. Movement</h2>
+      <ul>
+        <li><strong>All Pieces:</strong> May hop over one friendly piece per move. The hop does not change the piece’s normal movement pattern; it only removes the blocking piece from the path.</li>
+        <li><strong>Pawn:</strong> One step forward; two steps on its first move; captures diagonally one step forward. En passant and promotion rules apply.</li>
+        <li><strong>Rook:</strong> Any number of squares horizontally or vertically.</li>
+        <li><strong>Knight:</strong> Keeps its standard L-shaped move and also moves three squares in a straight line, creating a diamond-like movement pattern. It can jump over any piece.</li>
+        <li><strong>Bishop:</strong> Any number of squares diagonally.</li>
+        <li><strong>Queen:</strong> Combination of rook and bishop.</li>
+        <li><strong>King:</strong> One square any direction. Castling rules apply.</li>
+      </ul>
+      <h2>3. Special Moves</h2>
+      <ul>
+        <li>Castling, en‑passant, and promotion follow the standard chess rules.</li>
+      </ul>
+      <h2>4. Check, Checkmate, and Stalemate</h2>
+      <ul>
+        <li>A king is in check if an opponent’s piece attacks it.</li>
+        <li>Checkmate ends the game; stalemate is a draw.</li>
+      </ul>
+      <h2>5. Draws</h2>
+      <ul>
+        <li>Three‑fold repetition, fifty‑move rule, and insufficient material are standard draw conditions.</li>
+      </ul>
+      <p>These rules are enforced by the server.</p>
+    </section>
+  </main>
+  <script src="js/web.js"></script>
+</body>
+</html>

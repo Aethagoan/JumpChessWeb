@@ -13,16 +13,47 @@ builder.Services.AddSingleton<IPlayerService, PlayerService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.IncludeFields = true;
+});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("WebClient", policy =>
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
+app.UseCors("WebClient");
+
+var settings = app.Services.GetRequiredService<ISettingsService>();
 
 app.MapPost("/api/auth/login", (LoginDto dto) =>
 {
-    var token = AESAuth.EncryptToken(dto.Username, dto.Password);
+    var username = string.Empty;
+    if (dto.PlayerId.HasValue)
+    {
+        var match = settings.Credentials.FirstOrDefault(entry =>
+            entry.Value.Id == dto.PlayerId.Value && entry.Value.Password == dto.Password);
+        if (string.IsNullOrEmpty(match.Key)) return Results.Unauthorized();
+        username = match.Key;
+    }
+    else if (!string.IsNullOrEmpty(dto.Username) &&
+             settings.Credentials.TryGetValue(dto.Username, out var credential) &&
+             credential.Password == dto.Password)
+    {
+        username = dto.Username;
+    }
+    else
+    {
+        return Results.Unauthorized();
+    }
+
+    var token = AESAuth.EncryptToken(username, dto.Password);
     return Results.Ok(new LoginResponse(token));
 });
-
-var settings = app.Services.GetRequiredService<ISettingsService>();
 
 byte? GetPlayerId(HttpContext ctx)
 {
@@ -43,6 +74,23 @@ app.MapPost("/api/games", (HttpContext ctx, GameCreateDto dto, GameService gameS
     if (playerId == null) return Results.Unauthorized();
     var id = gameService.CreateGame(dto.WhitePlayer, dto.BlackPlayer, dto.EnableUndo, dto.WhiteVetoes, dto.BlackVetoes);
     return Results.Created($"/api/games/{id}", new GameCreatedResponse(id));
+});
+
+app.MapGet("/api/games", (HttpContext ctx, GameService gameService) =>
+{
+    var playerId = GetPlayerId(ctx);
+    if (playerId == null) return Results.Unauthorized();
+    var games = gameService.GetGames(playerId).Select(entry =>
+        new GameSummaryResponse(
+            entry.Id,
+            entry.Game.whitePlayerID,
+            entry.Game.blackPlayerID,
+            entry.Game.whiteToMove,
+            entry.Game.gameStatus,
+            entry.Game.allowUndo,
+            entry.Game.whiteVetoesPerTurn,
+            entry.Game.blackVetoesPerTurn));
+    return Results.Ok(games);
 });
 
 app.MapGet("/api/games/{id}", (HttpContext ctx, Guid id, GameService gameService) =>
@@ -112,6 +160,6 @@ app.UseSwaggerUI();
 
 app.Run();
 
-record LoginDto(string Username, string Password);
+record LoginDto(string? Username, string Password, byte? PlayerId = null);
 record GameCreateDto(byte WhitePlayer, byte BlackPlayer, bool EnableUndo = false, byte WhiteVetoes = 0, byte BlackVetoes = 0);
 record MoveRequest(int From, int To, int PromotionPiece = 0);

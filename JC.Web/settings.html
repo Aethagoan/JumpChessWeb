@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JumpChess - Settings</title>
+  <link rel="stylesheet" href="js/style.css">
+</head>
+<body>
+  <main class="shell">
+    <nav><a href="index.html">← Home</a></nav>
+    <section class="card">
+      <p class="eyebrow">PROFILE</p>
+      <h1>Settings</h1>
+      <p class="muted">These values are saved only in this browser.</p>
+      <form id="settings-form" class="form">
+        <label>Display name<input name="playerName" required autocomplete="nickname"></label>
+        <label>Player ID<input name="playerId" type="number" min="1" max="255" required></label>
+        <label>Player key<input name="playerKey" type="password" autocomplete="current-password"></label>
+        <label>API address<input name="apiBaseUrl" type="url" required placeholder="http://localhost:5000"></label>
+        <div class="actions">
+          <button class="primary" type="submit">Save settings</button>
+          <button type="button" id="test-connection">Test connection</button>
+        </div>
+        <p id="settings-status" class="status"></p>
+      </form>
+    </section>
+  </main>
+  <script src="js/web.js"></script>
+  <script>JumpChess.initSettings();</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JumpChess - Games</title>
+  <link rel="stylesheet" href="js/style.css">
+</head>
+<body>
+  <main class="shell">
+    <nav><a href="index.html">← Home</a><a href="setup.html">New game</a></nav>
+    <section class="card">
+      <p class="eyebrow">PLAY</p>
+      <h1>Current games</h1>
+      <div id="games-list" class="game-list"></div>
+      <p id="games-status" class="status"></p>
+    </section>
+  </main>
+  <script src="js/web.js"></script>
+  <script>JumpChess.initGames();</script>
+</body>
+</html>

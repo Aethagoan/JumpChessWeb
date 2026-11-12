@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JumpChess - Game</title>
+  <link rel="stylesheet" href="js/style.css">
+</head>
+<body>
+  <main class="shell game-shell">
+    <nav><a href="games.html">← Games</a><a href="settings.html">Settings</a></nav>
+    <section class="card">
+      <div class="game-heading"><div><p class="eyebrow">MATCH</p><h1 id="game-title">Game</h1></div><button id="refresh-game">Refresh</button></div>
+      <p id="game-players" class="muted"></p>
+      <p id="game-status" class="status"></p>
+      <div class="game-board-layout">
+        <aside class="game-actions">
+          <button id="undo-game">Undo</button>
+          <div class="veto-control">
+            <button id="veto-game">Veto</button>
+            <span id="veto-remaining" class="muted"></span>
+          </div>
+        </aside>
+        <div id="board" class="board"></div>
+      </div>
+      <p id="game-message" class="status"></p>
+    </section>
+  </main>
+  <script src="js/web.js"></script>
+  <script>JumpChess.initGame();</script>
+</body>
+</html>

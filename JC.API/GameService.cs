@@ -34,9 +34,10 @@ public class GameService
 
     public void Save(Guid id, Game game) => Persist(id, game);
 
-    public IEnumerable<Game> GetGames(byte? playerId)
+    public IEnumerable<(Guid Id, Game Game)> GetGames(byte? playerId)
     {
-        if (playerId == null) return _games.Values;
-        return _games.Values.Where(g => g.whitePlayerID == playerId.Value || g.blackPlayerID == playerId.Value);
+        var games = _games.Select(entry => (entry.Key, entry.Value));
+        if (playerId == null) return games;
+        return games.Where(entry => entry.Value.whitePlayerID == playerId.Value || entry.Value.blackPlayerID == playerId.Value);
     }
 }
